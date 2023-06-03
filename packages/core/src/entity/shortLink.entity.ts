@@ -20,6 +20,11 @@ export class ShortLink {
   @Column()
   uuid: string;
   /**
+   * 短链关联的长链地址
+   */
+  @Column()
+  link: string;
+  /**
    * 创建时间
    */
   @CreateDateColumn({
@@ -41,19 +46,38 @@ export class ShortLink {
   })
   deleteTime: Date;
   /**
-   * 过期时间
+   * 开始有效时间
    */
   @Column('timestamp', {
-    name: 'expire_time',
+    name: 'begin_time',
   })
-  expireTime: Date;
+  beginTime: Date;
   /**
-   * 关联的数据id
+   * 结束有效时间
+   */
+  @Column('timestamp', {
+    name: 'end_time',
+  })
+  endTime: Date;
+  /**
+   * 状态
+   */
+  @Column()
+  state: number;
+  /**
+   * 是否已经启用
    */
   @Column({
-    name: 'meta_id',
+    name: 'is_apply',
   })
-  metaId: number;
+  isApply: boolean;
+  /**
+   * 投放类型
+   */
+  @Column({
+    name: 'put_type',
+  })
+  putType: number;
   /**
    * 是否被删除
    */
@@ -61,4 +85,18 @@ export class ShortLink {
     name: 'is_del',
   })
   isDel: boolean;
+  /**
+   * 创建人
+   */
+  @Column({
+    name: 'create_user',
+  })
+  createUser: string;
+  /**
+   * 更新人
+   */
+  @Column({
+    name: 'update_user',
+  })
+  updateUser: string;
 }

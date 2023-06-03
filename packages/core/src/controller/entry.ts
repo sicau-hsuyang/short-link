@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Param } from '@midwayjs/core';
+import { Controller, Get, Inject, Param, Redirect } from '@midwayjs/core';
 import { Context } from 'egg';
 
 @Controller('/')
@@ -7,9 +7,8 @@ export class HomeController {
   ctx: Context;
 
   @Get('/')
-  async index() {
-    return 'index';
-  }
+  @Redirect('https://changba.com', 302)
+  async index() {}
 
   @Get('/:uuid')
   async entry(@Param('uuid') uuid: string) {

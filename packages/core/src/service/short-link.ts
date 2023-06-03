@@ -1,14 +1,13 @@
 import { Provide } from '@midwayjs/core';
-import { IShortLinkOptions } from '../interface';
+import { ShortLink } from '../entity/shortLink.entity';
+import { Repository } from 'typeorm';
+import { InjectEntityModel } from '@midwayjs/typeorm';
+import { ShortLinkDataModel } from '../interface';
 
 @Provide()
 export class ShortLinkService {
-  async getEntity(options: IShortLinkOptions) {
-    return {
-      uid: options.uid,
-      username: 'mockedName',
-      phone: '12345678901',
-      email: 'xxx.xxx@xxx.com',
-    };
-  }
+  @InjectEntityModel(ShortLink)
+  shortLinkModal: Repository<ShortLink>;
+
+  createModel(model: ShortLinkDataModel) {}
 }

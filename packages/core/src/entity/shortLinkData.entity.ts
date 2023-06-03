@@ -15,6 +15,13 @@ export class ShortLinkData {
   @PrimaryGeneratedColumn()
   id: number;
   /**
+   * 关联的短链ID
+   */
+  @Column({
+    name: 'short_link_id',
+  })
+  shortLinkId: number;
+  /**
    * 存储的数据内容
    */
   @Column({
