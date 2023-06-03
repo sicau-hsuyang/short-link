@@ -7,8 +7,13 @@ export const routes: RouteRecordRaw[] = [
   },
   {
     path: "/home",
-    name: "MemberCenter",
+    name: "Home",
     component: () => import("@/views/Home.vue"),
+  },
+  {
+    path: "/detail",
+    name: "Detail",
+    component: () => import("@/views/Detail.vue"),
   },
   {
     path: "/:pathMatch(.*)*",
