@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Inject, Post, Put } from '@midwayjs/core';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Post,
+  Put,
+  Query,
+} from '@midwayjs/core';
 import { HttpResponse, ShortLinkViewModel, Pagination } from '../interface';
 import { ShortLinkService } from '../service/short-link';
 import { BaseController } from './base';
@@ -9,9 +17,28 @@ export class ManageController extends BaseController {
   private shortLinkService: ShortLinkService;
 
   @Get('/list')
-  async getList() {
+  async getList(
+    @Query('pageSize') pageSize: number,
+    @Query('pageNum') pageNum: number,
+    @Query('code') code: string,
+    @Query('isApply') isApply: boolean,
+    @Query('beginTime') beginTime: string,
+    @Query('endTime') endTime: string,
+    @Query('beforeCreateTime') beforeCreateTime: string,
+    @Query('afterCreateTime') afterCreateTime: string
+  ) {
     return (await this.execWithHandlerError(
-      this.shortLinkService.getModelList
+      this.shortLinkService.getModelList,
+      {
+        pageSize,
+        pageNum,
+        uuid: code,
+        isApply,
+        beginTime,
+        endTime,
+        beforeCreateTime,
+        afterCreateTime,
+      }
     )) as HttpResponse<Pagination<ShortLinkViewModel>>;
   }
 

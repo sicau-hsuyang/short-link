@@ -21,15 +21,15 @@
       </div>
       <div class="search-control">
         <span class="search-control__label">创建时间：</span>
-        <el-date-picker type="datetime" placeholder="搜索创建时间" v-model.trim="search.createTime" />
+        <el-date-picker type="datetimerange" placeholder="搜索创建时间" value-format="YYYY/MM/DD hh:mm:ss" v-model.trim="search.createTime" />
       </div>
       <div class="search-control">
-        <span class="search-control__label">开始时间：</span>
-        <el-date-picker type="datetime" placeholder="搜索有效开始时间" v-model.trim="search.beginTime" />
+        <span class="search-control__label">开始生效时间：</span>
+        <el-date-picker type="datetime" placeholder="搜索开始生效时间" value-format="YYYY/MM/DD hh:mm:ss" v-model.trim="search.beginTime" />
       </div>
       <div class="search-control">
-        <span class="search-control__label">结束时间：</span>
-        <el-date-picker type="datetime" placeholder="搜索有效结束时间" v-model.trim="search.endTime" />
+        <span class="search-control__label">结束生效时间：</span>
+        <el-date-picker type="datetime" placeholder="搜索结束生效时间" value-format="YYYY/MM/DD hh:mm:ss" v-model.trim="search.endTime" />
       </div>
     </div>
     <div class="home-operation">
@@ -46,8 +46,8 @@
           <a :href="generateTestAddress(row)" target="_blank">短链测试</a>
         </template>
       </el-table-column>
-      <el-table-column prop="beginTime" label="有效开始时间" align="center" :formatter="(row, col, cellVal) => formatTime(cellVal)" />
-      <el-table-column prop="endTime" label="有效开始时间" align="center" :formatter="(row, col, cellVal) => formatTime(cellVal)" />
+      <el-table-column prop="beginTime" label="开始生效时间" align="center" :formatter="(row, col, cellVal) => formatTime(cellVal)" />
+      <el-table-column prop="endTime" label="结束生效时间" align="center" :formatter="(row, col, cellVal) => formatTime(cellVal)" />
       <el-table-column prop="status" label="状态" align="center" width="100" />
       <el-table-column prop="isApply" label="是否投产" align="center" width="60">
         <template #default="{ row }">
@@ -56,7 +56,6 @@
       </el-table-column>
       <el-table-column prop="createTime" label="创建时间" align="center" :formatter="(row, col, cellVal) => formatTime(cellVal)" />
       <el-table-column prop="updateTime" label="最后更新时间" align="center" :formatter="(row, col, cellVal) => formatTime(cellVal)" />
-      <el-table-column prop="deleteTime" label="删除时间" align="center" :formatter="(row, col, cellVal) => formatTime(cellVal)" />
       <el-table-column prop="createUser" label="创建人" align="center" />
       <el-table-column prop="updateUser" label="最后修改人" align="center" />
       <el-table-column label="操作" align="center" width="120">
@@ -96,16 +95,20 @@ const pagination = reactive({
 
 const zeroSearch = {
   code: "",
-  createTime: null,
+  createTime: [null, null],
   beginTime: null,
   endTime: null,
 };
 
-const search = reactive(zeroSearch);
+const search = reactive(cloneDeep(zeroSearch));
 
 async function getTableData() {
   loading.value = true;
+  const { createTime, ...rest } = search;
   const resp = await get("/api/admin/list", {
+    ...rest,
+    beforeCreateTime: createTime[0],
+    afterCreateTime: createTime[1],
     pageSize: pagination.pageSize,
     pageNum: pagination.pageNum,
   });
@@ -119,8 +122,7 @@ async function getTableData() {
 }
 
 function generateTestAddress(row) {
-  // TODO: 读取配置
-  return window.location.protocol + "//127.0.0.1:7001" + "/" + row.uuid;
+  return import.meta.env.VITE_SHORT_LINK_HOST + "/" + row.uuid;
 }
 
 function formatIsApply(v: boolean) {
@@ -136,11 +138,12 @@ function handleCreateLink() {
 }
 
 function handleSizeChange() {
-  this.handleSearch();
+  handleSearch();
 }
 
 function handleClear() {
   Object.assign(search, cloneDeep(zeroSearch));
+  getTableData();
 }
 
 function handleSearch() {
@@ -168,7 +171,7 @@ onMounted(() => {
     align-items: center;
 
     &__label {
-      min-width: 100px;
+      min-width: 120px;
       text-align: right;
     }
   }

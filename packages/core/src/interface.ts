@@ -74,6 +74,26 @@ export interface ShortLinkViewModel {
   isApply: boolean;
 }
 
+export interface ShortLinkQueryModel {
+  uuid?: string;
+
+  beforeCreateTime?: string;
+
+  afterCreateTime?: string;
+
+  beginTime?: string;
+
+  endTime?: string;
+
+  state?: number;
+
+  isApply?: boolean;
+
+  pageSize?: number;
+
+  pageNum?: number;
+}
+
 export interface ShortLinkModel {
   /**
    * 跳转的长链地址
