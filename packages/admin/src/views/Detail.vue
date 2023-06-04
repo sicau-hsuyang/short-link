@@ -21,7 +21,7 @@
           <el-button type="primary" @click="addRow">添加数据</el-button>
         </el-form-item>
         <el-form ref="metaFormRef" :model="metaForm" label-width="80px">
-          <el-form-item class="form-row" :label="'键值对' + (metaIdx + 1)" :prop="'items.' + meta.key + '.value'" v-for="(meta, metaIdx) in metaForm.items" :key="meta.key">
+          <el-form-item class="form-row" :label="'Key-Value' + (metaIdx + 1)" :prop="'items.' + meta.key + '.value'" v-for="(meta, metaIdx) in metaForm.items" :key="meta.key">
             <div class="key-value-row">
               <el-input class="key-value-input" v-model="meta.prop" placeholder="请输入属性名" />
               <el-input class="key-value-input" v-model="meta.value" placeholder="请输入属性值" />
@@ -47,6 +47,7 @@
 <script lang="ts" setup>
 import { PutTypeEnum, PutTypeOptions } from "@/config";
 import { reactive, ref } from "vue";
+import { post, put } from "@/request";
 
 const form = reactive({
   link: "",
@@ -76,7 +77,19 @@ function handleDeleteRow(delIdx: number) {
   metaForm.items.splice(delIdx, 1);
 }
 
-function submit() {}
+async function submit() {
+  const resp = await put(
+    "/api/admin/save",
+    {
+      ...form,
+      dictionary: metaForm.items,
+    },
+    {
+      json: true,
+    }
+  );
+  console.log(resp.data);
+}
 </script>
 
 <style lang="scss" scoped>

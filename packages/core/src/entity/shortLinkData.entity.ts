@@ -19,6 +19,7 @@ export class ShortLinkData {
    */
   @Column({
     name: 'short_link_id',
+    nullable: false,
   })
   shortLinkId: number;
   /**
@@ -26,6 +27,7 @@ export class ShortLinkData {
    */
   @Column({
     type: 'text',
+    nullable: false,
   })
   document: string;
   /**
@@ -54,6 +56,7 @@ export class ShortLinkData {
    */
   @Column('bit', {
     name: 'is_del',
+    default: false,
   })
   isDel: boolean;
 }

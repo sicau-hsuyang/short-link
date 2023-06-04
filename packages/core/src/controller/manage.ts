@@ -1,24 +1,21 @@
 import { Body, Controller, Inject, Post, Put } from '@midwayjs/core';
-import { ShortLinkViewModel } from '../interface';
-import { ShortLinkDataService } from '../service/short-link-meta';
+import { HttpResponse, ShortLinkViewModel } from '../interface';
 import { ShortLinkService } from '../service/short-link';
+import { BaseController } from './base';
 
-@Controller('/admin')
-export class ManageController {
+@Controller('/api/admin')
+export class ManageController extends BaseController {
   @Inject()
-  shortLinkDataService: ShortLinkDataService;
-
-  @Inject()
-  shortLinkService: ShortLinkService;
+  private shortLinkService: ShortLinkService;
 
   @Put('/save')
-  async createEntity(@Body() shortLink: ShortLinkViewModel) {
-    // 存储元数据
-    const metaId = await this.shortLinkDataService.createShortLinkData({
-      document: JSON.stringify(shortLink.dictionary),
-      isDel: false,
-    });
-    this.shortLinkService.createModel()
+  async createEntity(
+    @Body() shortLink: ShortLinkViewModel
+  ): Promise<HttpResponse<ShortLinkViewModel>> {
+    return (await this.execWithHandlerError(
+      this.shortLinkService.createModel,
+      shortLink
+    )) as HttpResponse<ShortLinkViewModel>;
   }
 
   @Post('/save')

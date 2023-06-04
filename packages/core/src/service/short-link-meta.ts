@@ -11,11 +11,12 @@ export class ShortLinkDataService {
 
   async createShortLinkData(
     shortLinkDataParams: ShortLinkDataModel
-  ): Promise<number> {
+  ): Promise<ShortLinkData> {
     const shortLinkData = new ShortLinkData();
+    shortLinkData.shortLinkId = shortLinkDataParams.shortLinkId;
     shortLinkData.document = shortLinkDataParams.document;
     shortLinkData.isDel = shortLinkDataParams.isDel || false;
-    const { id } = await this.shortLinkDataModel.save(shortLinkData);
-    return id;
+    const saved = await this.shortLinkDataModel.save(shortLinkData);
+    return saved;
   }
 }

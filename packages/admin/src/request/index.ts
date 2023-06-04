@@ -1,10 +1,11 @@
-import axios from "axios";
+import axios, { InternalAxiosRequestConfig } from "axios";
 import type { AxiosRequestConfig } from "axios";
-const symbolJson = '__cb__request_json__'
+import qs from "qs";
+const symbolJson = "__cb__request_json__";
 
 interface ServerResponse<T> {
   code: string;
-  body: T;
+  data: T;
   msg: string;
 }
 
@@ -31,7 +32,10 @@ const instance = axios.create({
 
 // 请求拦截器
 instance.interceptors.request.use(
-  (config) => {
+  (config: InternalAxiosRequestConfig & { json?: boolean }) => {
+    if (config.json) {
+      config.data[symbolJson] = true;
+    }
     return config;
   },
   (error) => {
@@ -43,11 +47,11 @@ export const get = <Data = null>(url: string, params: Record<string, any> = {}, 
   return instance.get<Data, ServerResponse<Data>>(url, Object.assign({ params: params }, config));
 };
 
-export const post = <Data = null>(url: string, data: Record<string, any> = {}, config: AxiosRequestConfig = {}) => {
+export const post = <Data = null>(url: string, data: Record<string, any> = {}, config: AxiosRequestConfig & { json?: boolean } = {}) => {
   return instance.post<Data, ServerResponse<Data>>(url, data, config);
 };
 
-export const put = <Data = null>(url: string, data: Record<string, any> = {}, config: AxiosRequestConfig = {}) => {
+export const put = <Data = null>(url: string, data: Record<string, any> = {}, config: AxiosRequestConfig & { json?: boolean } = {}) => {
   return instance.put<Data, ServerResponse<Data>>(url, data, config);
 };
 

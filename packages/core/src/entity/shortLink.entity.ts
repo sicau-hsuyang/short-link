@@ -17,18 +17,23 @@ export class ShortLink {
   /**
    * 加密后的唯一ID
    */
-  @Column()
+  @Column({
+    nullable: false,
+  })
   uuid: string;
   /**
    * 短链关联的长链地址
    */
-  @Column()
+  @Column({
+    nullable: false,
+  })
   link: string;
   /**
    * 创建时间
    */
   @CreateDateColumn({
     name: 'create_time',
+    nullable: false,
   })
   createTime: Date;
   /**
@@ -36,6 +41,7 @@ export class ShortLink {
    */
   @UpdateDateColumn({
     name: 'update_time',
+    nullable: false,
   })
   updateTime: Date;
   /**
@@ -43,6 +49,7 @@ export class ShortLink {
    */
   @DeleteDateColumn({
     name: 'delete_time',
+    nullable: false,
   })
   deleteTime: Date;
   /**
@@ -50,6 +57,7 @@ export class ShortLink {
    */
   @Column('timestamp', {
     name: 'begin_time',
+    nullable: true,
   })
   beginTime: Date;
   /**
@@ -57,6 +65,7 @@ export class ShortLink {
    */
   @Column('timestamp', {
     name: 'end_time',
+    nullable: true,
   })
   endTime: Date;
   /**
@@ -69,6 +78,7 @@ export class ShortLink {
    */
   @Column({
     name: 'is_apply',
+    nullable: false,
   })
   isApply: boolean;
   /**
@@ -76,6 +86,7 @@ export class ShortLink {
    */
   @Column({
     name: 'put_type',
+    nullable: false,
   })
   putType: number;
   /**
@@ -83,6 +94,7 @@ export class ShortLink {
    */
   @Column('bit', {
     name: 'is_del',
+    default: false,
   })
   isDel: boolean;
   /**
@@ -90,6 +102,7 @@ export class ShortLink {
    */
   @Column({
     name: 'create_user',
+    nullable: false,
   })
   createUser: string;
   /**
@@ -97,6 +110,7 @@ export class ShortLink {
    */
   @Column({
     name: 'update_user',
+    nullable: false,
   })
   updateUser: string;
 }
