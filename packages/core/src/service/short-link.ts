@@ -26,11 +26,12 @@ export class ShortLinkService {
   createModel = async (model: ShortLinkViewModel) => {
     // 存储元数据
     const shortLink = new ShortLink();
-    shortLink.beginTime = model.startTime ? new Date(model.startTime) : null;
+    shortLink.beginTime = model.beginTime ? new Date(model.beginTime) : null;
     shortLink.endTime = model.endTime ? new Date(model.endTime) : null;
     // TODO: 写死
     shortLink.createUser = 'yangxu';
     shortLink.updateUser = shortLink.createUser;
+    debugger;
     shortLink.isApply = model.isApply;
     shortLink.isDel = false;
     shortLink.link = model.link;
@@ -57,7 +58,9 @@ export class ShortLinkService {
       pageSize: 10,
       pageNum: 1,
       total,
-      list: allList,
+      list: allList.sort((a, b) => {
+        return b.createTime.getTime() - a.createTime.getTime();
+      }),
     };
   };
 }

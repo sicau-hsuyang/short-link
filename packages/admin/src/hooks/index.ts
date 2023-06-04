@@ -10,7 +10,6 @@ export function useMessage() {
 
 export function useFormatter() {
   function formatTime(v: string | number) {
-    console.log(v);
     if (v === "" || v === undefined || v === null) {
       return "--";
     }

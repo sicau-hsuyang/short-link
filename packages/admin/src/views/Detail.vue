@@ -32,8 +32,8 @@
       </el-form-item>
       <el-form-item label="立即应用">
         <el-radio-group v-model="form.isApply">
-          <el-radio :label="1">是</el-radio>
-          <el-radio :label="0">否</el-radio>
+          <el-radio :label="true">是</el-radio>
+          <el-radio :label="false">否</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item>
@@ -57,7 +57,7 @@ const zeroForm = {
   putType: PutTypeEnum.H5,
   beginTime: "",
   endTime: "",
-  isApply: 0,
+  isApply: false,
 };
 const message = useMessage();
 const router = useRouter();

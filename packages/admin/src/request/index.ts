@@ -54,7 +54,7 @@ instance.interceptors.response.use((response) => {
 });
 
 export const get = <Data = null>(url: string, params: Record<string, any> = {}, config: AxiosRequestConfig = {}) => {
-  return instance.get<Data, ServerResponse<Data>>(url, Object.assign({ params: params }, config));
+  return instance.get<Data, ServerResponse<Data>>(url, Object.assign({ params }, config));
 };
 
 export const post = <Data = null>(url: string, data: Record<string, any> = {}, config: AxiosRequestConfig & { json?: boolean } = {}) => {

@@ -52,7 +52,7 @@ export interface ShortLinkViewModel {
   /**
    * 开始有效时间
    */
-  startTime?: string;
+  beginTime?: string;
   /**
    * 结束有效时间
    */
