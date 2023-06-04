@@ -2,19 +2,28 @@ import { Inject, Provide } from '@midwayjs/core';
 import { ShortLink } from '../entity/shortLink.entity';
 import { Repository } from 'typeorm';
 import { InjectEntityModel } from '@midwayjs/typeorm';
-import { ShortLinkViewModel } from '../interface';
+import { Pagination, ShortLinkViewModel } from '../interface';
 import { ShortLinkDataService } from './short-link-meta';
 import { createHashCode } from '../utils';
+import { ShortLinkState } from '../business-config';
 
 @Provide()
 export class ShortLinkService {
   @InjectEntityModel(ShortLink)
-  private shortLinkModal: Repository<ShortLink>;
+  protected shortLinkModel: Repository<ShortLink>;
 
   @Inject()
-  private shortLinkDataService: ShortLinkDataService;
+  protected shortLinkDataService: ShortLinkDataService;
 
-  async createModel(model: ShortLinkViewModel) {
+  queryModel = async (uuid: string) => {
+    return await this.shortLinkModel.findOne({
+      where: {
+        uuid,
+      },
+    });
+  };
+
+  createModel = async (model: ShortLinkViewModel) => {
     // 存储元数据
     const shortLink = new ShortLink();
     shortLink.beginTime = model.startTime ? new Date(model.startTime) : null;
@@ -25,12 +34,11 @@ export class ShortLinkService {
     shortLink.isApply = model.isApply;
     shortLink.isDel = false;
     shortLink.link = model.link;
-    // TODO: 状态暂时还没有定义
-    shortLink.state = 0;
+    shortLink.state = ShortLinkState.Enabled;
     // TODO: 简单粗暴的处理
     shortLink.uuid = createHashCode(shortLink.createUser + '-' + Date.now());
     shortLink.putType = model.putType;
-    const savedShortLink = await this.shortLinkModal.save(shortLink);
+    const savedShortLink = await this.shortLinkModel.save(shortLink);
     const saved = await this.shortLinkDataService.createShortLinkData({
       shortLinkId: savedShortLink.id,
       document: JSON.stringify(model.dictionary),
@@ -41,5 +49,15 @@ export class ShortLinkService {
       dictionary: JSON.parse(saved.document),
     } as unknown as ShortLinkViewModel;
     return response;
-  }
+  };
+
+  getModelList: () => Promise<Pagination<ShortLink>> = async () => {
+    const [allList, total] = await this.shortLinkModel.findAndCount({});
+    return {
+      pageSize: 10,
+      pageNum: 1,
+      total,
+      list: allList,
+    };
+  };
 }

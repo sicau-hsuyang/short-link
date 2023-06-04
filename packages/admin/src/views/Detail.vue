@@ -38,7 +38,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submit">创建</el-button>
-        <el-button>取消</el-button>
+        <el-button @click="handleCancel">取消</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -48,14 +48,20 @@
 import { PutTypeEnum, PutTypeOptions } from "@/config";
 import { reactive, ref } from "vue";
 import { post, put } from "@/request";
+import { useMessage } from "@/hooks";
+import { cloneDeep } from "lodash-es";
+import { useRouter } from "vue-router";
 
-const form = reactive({
+const zeroForm = {
   link: "",
   putType: PutTypeEnum.H5,
   beginTime: "",
   endTime: "",
   isApply: 0,
-});
+};
+const message = useMessage();
+const router = useRouter();
+const form = reactive(cloneDeep(zeroForm));
 
 const metaForm = reactive<{ items: Array<{ prop: string; value: string; key: number }> }>({
   items: [],
@@ -77,6 +83,12 @@ function handleDeleteRow(delIdx: number) {
   metaForm.items.splice(delIdx, 1);
 }
 
+function handleCancel() {
+  Object.assign(form, cloneDeep(zeroForm));
+  metaForm.items = [];
+  idx.value = 0;
+}
+
 async function submit() {
   const resp = await put(
     "/api/admin/save",
@@ -88,7 +100,16 @@ async function submit() {
       json: true,
     }
   );
-  console.log(resp.data);
+  if (resp.code === 1) {
+    message({
+      message: "保存成功!",
+      type: "success",
+    });
+    router.push({
+      name: "Home",
+      replace: true,
+    });
+  }
 }
 </script>
 

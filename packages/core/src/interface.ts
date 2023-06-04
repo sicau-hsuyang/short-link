@@ -23,6 +23,13 @@ export interface HttpErrorResponse<T> extends HttpResponse<T> {
   data: null;
 }
 
+export interface Pagination<T> {
+  list: T[];
+  pageSize: number;
+  total: number;
+  pageNum: number;
+}
+
 export interface ShortLinkViewModel {
   id?: string;
 

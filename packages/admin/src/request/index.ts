@@ -4,7 +4,7 @@ import qs from "qs";
 const symbolJson = "__cb__request_json__";
 
 interface ServerResponse<T> {
-  code: string;
+  code: number;
   data: T;
   msg: string;
 }
@@ -42,6 +42,16 @@ instance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+instance.interceptors.response.use((response) => {
+  if (response.status >= 200 && response.status < 300) {
+    if (response.config.responseType !== "blob") {
+      return response.data;
+    } else {
+      return response;
+    }
+  }
+});
 
 export const get = <Data = null>(url: string, params: Record<string, any> = {}, config: AxiosRequestConfig = {}) => {
   return instance.get<Data, ServerResponse<Data>>(url, Object.assign({ params: params }, config));

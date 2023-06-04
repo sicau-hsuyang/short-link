@@ -1,5 +1,5 @@
-import { Body, Controller, Inject, Post, Put } from '@midwayjs/core';
-import { HttpResponse, ShortLinkViewModel } from '../interface';
+import { Body, Controller, Get, Inject, Post, Put } from '@midwayjs/core';
+import { HttpResponse, ShortLinkViewModel, Pagination } from '../interface';
 import { ShortLinkService } from '../service/short-link';
 import { BaseController } from './base';
 
@@ -7,6 +7,13 @@ import { BaseController } from './base';
 export class ManageController extends BaseController {
   @Inject()
   private shortLinkService: ShortLinkService;
+
+  @Get('/list')
+  async getList() {
+    return (await this.execWithHandlerError(
+      this.shortLinkService.getModelList
+    )) as HttpResponse<Pagination<ShortLinkViewModel>>;
+  }
 
   @Put('/save')
   async createEntity(

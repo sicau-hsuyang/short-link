@@ -1,12 +1,17 @@
 import { HttpResponse } from '../interface';
 
 export class BaseController {
-  execWithHandlerError(
+  async execWithHandlerError(
     fn: (...args: unknown[]) => unknown,
     ...args: unknown[]
-  ): HttpResponse<unknown> {
+  ): Promise<HttpResponse<unknown>> {
     try {
-      return fn.apply(this, args);
+      const data = await fn.apply(this, args);
+      return {
+        code: 1,
+        msg: '操作成功',
+        data,
+      };
     } catch (exp) {
       return {
         code: -1,
