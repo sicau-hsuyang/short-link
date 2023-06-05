@@ -5,6 +5,7 @@ import {
   Inject,
   Post,
   Put,
+  Del,
   Query,
 } from '@midwayjs/core';
 import { HttpResponse, ShortLinkViewModel, Pagination } from '../interface';
@@ -40,6 +41,14 @@ export class ManageController extends BaseController {
         afterCreateTime,
       }
     )) as HttpResponse<Pagination<ShortLinkViewModel>>;
+  }
+
+  @Del('/del')
+  async deleteEntity(@Query('id') id: number) {
+    return (await this.execWithHandlerError(
+      this.shortLinkService.deleteModel,
+      id
+    )) as HttpResponse<number>;
   }
 
   @Put('/save')

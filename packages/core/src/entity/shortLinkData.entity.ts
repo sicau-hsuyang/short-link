@@ -51,12 +51,4 @@ export class ShortLinkData {
     name: 'delete_time',
   })
   deleteTime: Date;
-  /**
-   * 是否被删除
-   */
-  @Column('bit', {
-    name: 'is_del',
-    default: false,
-  })
-  isDel: boolean;
 }

@@ -74,14 +74,15 @@
 
 <script setup lang="ts">
 import { onMounted, reactive } from "vue";
-import { get } from "@/request";
+import { get, del } from "@/request";
 import { useRouter } from "vue-router";
-import { useFormatter } from "@/hooks";
+import { useFormatter, useMessageBox, useMessage } from "@/hooks";
 import { Edit, Delete } from "@element-plus/icons-vue";
 import { cloneDeep } from "lodash-es";
 import { ref } from "vue";
+import { Pagination, ShortLink } from "@/types";
 
-let tableData = reactive([]);
+let tableData = reactive<ShortLink[]>([]);
 
 const loading = ref(false);
 
@@ -98,14 +99,19 @@ const zeroSearch = {
   createTime: [null, null],
   beginTime: null,
   endTime: null,
+  isApply: null,
+  state: 0,
 };
+
+const messageBox = useMessageBox();
+const message = useMessage();
 
 const search = reactive(cloneDeep(zeroSearch));
 
 async function getTableData() {
   loading.value = true;
   const { createTime, ...rest } = search;
-  const resp = await get("/api/admin/list", {
+  const resp = await get<Pagination<ShortLink>>("/api/admin/list", {
     ...rest,
     beforeCreateTime: createTime[0],
     afterCreateTime: createTime[1],
@@ -117,11 +123,11 @@ async function getTableData() {
     pagination.total = resp.data.total;
     pagination.pageSize = resp.data.pageSize;
     pagination.pageNum = resp.data.pageNum;
-    tableData = reactive(resp.data.list);
+    tableData = reactive<ShortLink[]>(resp.data.list);
   }
 }
 
-function generateTestAddress(row) {
+function generateTestAddress(row: ShortLink) {
   return import.meta.env.VITE_SHORT_LINK_HOST + "/" + row.uuid;
 }
 
@@ -151,7 +157,40 @@ function handleSearch() {
   getTableData();
 }
 
-function handleEdit(row) {}
+function handleEdit(row: ShortLink) {
+  console.log(row);
+}
+
+async function handleDelete(row: ShortLink) {
+  const result = await messageBox({
+    message: "确定要删除当前短链吗？",
+  });
+  if (!result) {
+    return;
+  }
+  if (row.isApply) {
+    message({
+      type: "error",
+      message: "已经投产的短链不允许删除！",
+    });
+    return;
+  }
+  const resp = await del("/api/admin/del", {
+    id: row.id,
+  });
+  if (resp.code === 1) {
+    message({
+      type: "success",
+      message: "删除成功!",
+    });
+    getTableData();
+  } else {
+    message({
+      type: "error",
+      message: "删除失败！",
+    });
+  }
+}
 
 onMounted(() => {
   getTableData();

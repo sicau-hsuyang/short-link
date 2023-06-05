@@ -9,6 +9,18 @@ interface ServerResponse<T> {
   msg: string;
 }
 
+interface SuccessServerResponse<T> {
+  code: 1;
+  data: T;
+  msg: string;
+}
+
+interface ErrorServiceResponse {
+  code: -9999;
+  msg: string;
+  data: {};
+}
+
 const instance = axios.create({
   timeout: 63 * 1000,
   transformRequest: [
@@ -53,18 +65,26 @@ instance.interceptors.response.use((response) => {
   }
 });
 
+function catchError(exp: Error) {
+  return {
+    code: -9999,
+    msg: exp,
+    data: {},
+  };
+}
+
 export const get = <Data = null>(url: string, params: Record<string, any> = {}, config: AxiosRequestConfig = {}) => {
-  return instance.get<Data, ServerResponse<Data>>(url, Object.assign({ params }, config));
+  return instance.get<Data, ServerResponse<Data>>(url, Object.assign({ params }, config)).catch(catchError) as Promise<SuccessServerResponse<Data> | ErrorServiceResponse>;
 };
 
 export const post = <Data = null>(url: string, data: Record<string, any> = {}, config: AxiosRequestConfig & { json?: boolean } = {}) => {
-  return instance.post<Data, ServerResponse<Data>>(url, data, config);
+  return instance.post<Data, ServerResponse<Data>>(url, data, config).catch(catchError) as Promise<ServerResponse<Data>>;
 };
 
 export const put = <Data = null>(url: string, data: Record<string, any> = {}, config: AxiosRequestConfig & { json?: boolean } = {}) => {
-  return instance.put<Data, ServerResponse<Data>>(url, data, config);
+  return instance.put<Data, ServerResponse<Data>>(url, data, config).catch(catchError) as Promise<ServerResponse<Data>>;
 };
 
 export const del = <Data = null>(url: string, params: Record<string, any> = {}, config: AxiosRequestConfig = {}) => {
-  return instance.delete<Data, ServerResponse<Data>>(url, Object.assign({ params: params }, config));
+  return instance.delete<Data, ServerResponse<Data>>(url, Object.assign({ params }, config)).catch(catchError) as Promise<ServerResponse<Data>>;
 };

@@ -27,6 +27,12 @@ export class ShortLinkService {
     });
   };
 
+  deleteModel = async (id: number) => {
+    await this.shortLinkDataService.deleteByShortLinkId(id);
+    const results = await this.shortLinkModel.softDelete(id);
+    return results.affected;
+  };
+
   createModel = async (model: ShortLinkViewModel) => {
     // 存储元数据
     const shortLink = new ShortLink();
@@ -36,7 +42,6 @@ export class ShortLinkService {
     shortLink.createUser = 'yangxu';
     shortLink.updateUser = shortLink.createUser;
     shortLink.isApply = model.isApply;
-    shortLink.isDel = false;
     shortLink.link = model.link;
     shortLink.state = ShortLinkState.Enabled;
     // TODO: 简单粗暴的处理

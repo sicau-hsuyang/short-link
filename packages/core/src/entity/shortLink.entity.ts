@@ -90,14 +90,6 @@ export class ShortLink {
   })
   putType: number;
   /**
-   * 是否被删除
-   */
-  @Column('bit', {
-    name: 'is_del',
-    default: false,
-  })
-  isDel: boolean;
-  /**
    * 创建人
    */
   @Column({

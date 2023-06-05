@@ -9,6 +9,18 @@ export class ShortLinkDataService {
   @InjectEntityModel(ShortLinkData)
   shortLinkDataModel: Repository<ShortLinkData>;
 
+  deleteByShortLinkId = async (id: number) => {
+    const builder = this.shortLinkDataModel.createQueryBuilder();
+    const results = await builder
+      .update(ShortLinkData)
+      .set({ deleteTime: new Date() })
+      .where('short_link_id=:id', {
+        id,
+      })
+      .execute();
+    return results;
+  };
+
   /**
    * 创建短链保存的关联信息
    * @param shortLinkDataParams
@@ -22,7 +34,6 @@ export class ShortLinkDataService {
     const shortLinkData = new ShortLinkData();
     shortLinkData.shortLinkId = shortLinkDataParams.shortLinkId;
     shortLinkData.document = shortLinkDataParams.document;
-    shortLinkData.isDel = shortLinkDataParams.isDel || false;
     const saved = await this.shortLinkDataModel.save(shortLinkData);
     return saved;
   };
